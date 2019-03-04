@@ -1,9 +1,7 @@
 from apikey import SlackAPI
 from setting import SlackSetting
 from slackclient import SlackClient
-import logging
-import os
-import time
+from utilities import retry, set_logger
 
 
 class SlackNotifier(SlackAPI, SlackSetting):
@@ -13,37 +11,32 @@ class SlackNotifier(SlackAPI, SlackSetting):
         self.set_logger()
 
     def set_logger(self):
-        logger_file = os.path.join(self.SLACK_LOGGER_PATH, self.SLACK_LOGGER_FILE)
-        logging.basicConfig(filename=logger_file, level=getattr(logging, self.SLACK_LOGGER_LEVEL),
-                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        self.logger = logging.getLogger(__name__)
+        self.logger = set_logger(self.SLACK_LOGGER_PATH, self.SLACK_LOGGER_FILE, self.SLACK_LOGGER_LEVEL, __name__)
 
-    def send_message(self, message):
-        sc = SlackClient(self.SLACK_BOT_TOKEN)
-        response = sc.api_call('chat.postMessage', channel=self.SLACK_CHANNEL, text=message)
+    def _send_message(self, message):
+        try:
+            sc = SlackClient(self.SLACK_BOT_TOKEN)
+            response = sc.api_call('chat.postMessage', channel=self.SLACK_CHANNEL, text=message)
+        except Exception as e:
+            response = {'ok': False, 'error': e}
         return response
 
-    def retry(self, func, *params):
-        count = 0
-        run_success = False
-        while count < self.SLACK_NUM_RETRY and not run_success:
-            try:
-                response = func(params)
-                if response is None or not response['ok']:
-                    self.logger.error('Unable to send Slack message. {}'.format(response['error']))
-                    time.sleep(self.SLACK_SLEEP)
-                    count += 1
-                else:
-                    run_success = True
-            except Exception as e:
-                self.logger.error('Error in sending Slack message. {}'.format(e))
-                time.sleep(self.SLACK_SLEEP)
-                count += 1
+    @ staticmethod
+    def _message_checker(response):
+        if not response['ok']:
+            result = {'status': False, 'message': response['error']}
+        else:
+            result = {'status': True, 'message': None}
+        return result
+
+    def send_message(self, message):
+        retry(self._send_message, message, checker=self._message_checker, num_retry=self.SLACK_NUM_RETRY,
+              sleep_time=self.SLACK_SLEEP, logger=self.logger)
 
 
 def test():
     sn = SlackNotifier()
-    sn.retry(sn.send_message, 'test')
+    sn.send_message('test')
 
 
 if __name__ == '__main__':
