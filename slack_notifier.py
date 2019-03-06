@@ -1,5 +1,5 @@
-from apikey import SlackAPI
-from setting import SlackSetting
+from notifiers_apikey import SlackAPI
+from notifiers_setting import SlackSetting
 from slackclient import SlackClient
 from utilities import retry, set_logger
 

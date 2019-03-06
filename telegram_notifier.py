@@ -1,7 +1,7 @@
 import requests
 import json
-from apikey import TelegramAPI
-from setting import TelegramSetting
+from notifiers_apikey import TelegramAPI
+from notifiers_setting import TelegramSetting
 from utilities import retry, set_logger
 
 
