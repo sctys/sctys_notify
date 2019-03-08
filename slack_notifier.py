@@ -34,11 +34,11 @@ class SlackNotifier(SlackAPI, SlackSetting):
               sleep_time=self.SLACK_SLEEP, logger=self.logger)
 
 
-def test():
+def test(test_message):
     sn = SlackNotifier()
-    sn.send_message('test')
+    sn.send_message(test_message)
 
 
 if __name__ == '__main__':
-    test()
+    test('test')
 

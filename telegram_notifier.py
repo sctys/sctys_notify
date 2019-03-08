@@ -37,11 +37,11 @@ class TelegramNotifier(TelegramAPI, TelegramSetting):
               sleep_time=self.TELEGRAM_SLEEP, logger=self.logger)
 
 
-def test():
+def test(test_message):
     tn = TelegramNotifier()
-    tn.send_message('test')
+    tn.send_message(test_message)
 
 
 if __name__ == '__main__':
-    test()
+    test('test')
 
