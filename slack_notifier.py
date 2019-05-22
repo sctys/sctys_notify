@@ -1,6 +1,6 @@
 from notifiers_apikey import SlackAPI
 from notifiers_setting import SlackSetting
-from slackclient import SlackClient
+from slack import WebClient
 from utilities import retry, set_logger
 
 
@@ -15,8 +15,8 @@ class SlackNotifier(SlackAPI, SlackSetting):
 
     def _send_message(self, message):
         try:
-            sc = SlackClient(self.SLACK_BOT_TOKEN)
-            response = sc.api_call('chat.postMessage', channel=self.SLACK_CHANNEL, text=message)
+            sc = WebClient(self.SLACK_BOT_TOKEN)
+            response = sc.chat_postMessage(channel=self.SLACK_CHANNEL, text=message)
         except Exception as e:
             response = {'ok': False, 'error': e}
         return response
