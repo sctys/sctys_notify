@@ -1,6 +1,5 @@
 import os
 
-
 class SlackSetting(object):
     SLACK_NUM_RETRY = 5
     SLACK_SLEEP = 10
