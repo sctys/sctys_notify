@@ -1,3 +1,5 @@
+''' To be archived
+
 import os
 
 class SlackSetting(object):
@@ -16,3 +18,5 @@ class TelegramSetting(object):
     TELEGRAM_LOGGER_LEVEL = 'DEBUG'
     TELEGRAM_ENDPOINT = 'https://api.telegram.org/bot'
     TELEGRAM_SEND = '/sendMessage'
+
+'''

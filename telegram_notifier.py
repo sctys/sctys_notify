@@ -1,22 +1,19 @@
 import requests
 import json
 from notifiers_apikey import TelegramAPI
-from notifiers_setting import TelegramSetting
-from utilities import retry, set_logger
+from notifier_interface import NotifierInterface
 
 
-class TelegramNotifier(TelegramAPI, TelegramSetting):
+class TelegramNotifier(NotifierInterface, TelegramAPI):
+    TELEGRAM_ENDPOINT = 'https://api.telegram.org/bot'
+    TELEGRAM_SEND = '/sendMessage'
 
-    def __init__(self):
+    def __init__(self, project, logger):
+        super().__init__(project, logger)
         self.url = self.TELEGRAM_ENDPOINT + self.TELEGRAM_TOKEN + self.TELEGRAM_SEND
-        self.logger = None
-        self.set_logger()
 
-    def set_logger(self):
-        self.logger = set_logger(self.TELEGRAM_LOGGER_PATH, self.TELEGRAM_LOGGER_FILE, self.TELEGRAM_LOGGER_LEVEL,
-                                 __name__)
-
-    def _send_message(self, message):
+    def send_message(self, message):
+        message = 'Message from Project: {}\n\n{}'.format(self.project, message)
         try:
             params = {'chat_id': self.CHAT_ID, 'text': message}
             response = json.loads(requests.post(self.url, data=params).content)
@@ -24,24 +21,4 @@ class TelegramNotifier(TelegramAPI, TelegramSetting):
             response = {'ok': False, 'error': e}
         return response
 
-    @staticmethod
-    def _message_checker(response):
-        if not response['ok']:
-            result = {'status': False, 'message': response['error']}
-        else:
-            result = {'status': True, 'message': None}
-        return result
-
-    def send_message(self, message):
-        retry(self._send_message, message, checker=self._message_checker, num_retry=self.TELEGRAM_NUM_RETRY,
-              sleep_time=self.TELEGRAM_SLEEP, logger=self.logger)
-
-
-def test(test_message):
-    tn = TelegramNotifier()
-    tn.send_message(test_message)
-
-
-if __name__ == '__main__':
-    test('test')
 
