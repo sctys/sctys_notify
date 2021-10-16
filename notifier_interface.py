@@ -1,6 +1,8 @@
 import os
 import sys
-sys.path.append(os.environ['SCTYS_PROJECT'] + '/sctys_utilities')
+sys.path.append(os.environ['SCTYS_PROJECT'] + '/sctys_global_parameters')
+from global_parameters import Path
+sys.path.append(Path.UTILITIES_PROJECT)
 from utilities_functions import retry_wrapper
 
 

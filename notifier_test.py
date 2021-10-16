@@ -1,7 +1,9 @@
 import os
 import sys
 import inspect
-sys.path.append(os.environ['SCTYS_PROJECT'] + '/sctys_utilities')
+sys.path.append(os.environ['SCTYS_PROJECT'] + '/sctys_global_parameters')
+from global_parameters import Path
+sys.path.append(Path.UTILITIES_PROJECT)
 from utilities_functions import set_logger
 from slack_notifier import SlackNotifier
 from telegram_notifier import TelegramNotifier
