@@ -12,7 +12,7 @@ class TelegramNotifier(NotifierInterface, TelegramAPI):
         super().__init__(project, logger)
         self.url = self.TELEGRAM_ENDPOINT + self.TELEGRAM_TOKEN + self.TELEGRAM_SEND
 
-    def send_message(self, message):
+    def send_message(self, message, log_only=False):
         message = 'Message from Project: {}\n\n{}'.format(self.project, message)
         try:
             params = {'chat_id': self.CHAT_ID, 'text': message}

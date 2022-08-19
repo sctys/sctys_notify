@@ -29,10 +29,10 @@ class NotifierInterface(object):
             result = {'status': True, 'terminate': True, 'message': None}
         return result
 
-    def send_message(self, message):
+    def send_message(self, message, log_only=False):
         raise NotImplementedError
 
-    def retry_send_message(self, message):
+    def retry_send_message(self, message, log_only=False):
         return retry_wrapper(
-            self.send_message, self.message_checker, self.NUM_RETRY, self.TIME_SLEEP, self.logger)(message)
+            self.send_message, self.message_checker, self.NUM_RETRY, self.TIME_SLEEP, self.logger)(message, log_only)
 
